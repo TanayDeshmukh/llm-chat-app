@@ -28,8 +28,8 @@ how all the individual pieces fit together in a well-organized Python project wh
 ## Getting started
 
 ### Prerequisites 
-1. Docker is required to run the OpenSearch container. Details for the installation can be found [here] (https://opensearch.org/docs/latest/install-and-configure/install-opensearch/docker/).
-2. Huggingface API token to use the InferenceClient. Details can be found [here] (https://huggingface.co/docs/hub/security-tokens).
+1. Docker is required to run the OpenSearch container. Details for the installation can be found [here](https://opensearch.org/docs/latest/install-and-configure/install-opensearch/docker/).
+2. Huggingface API token to use the InferenceClient. Details can be found [here](https://huggingface.co/docs/hub/security-tokens).
 3. OpenAI API token (Required only if you want to use the OpenAI models).
 
 ### Setup
