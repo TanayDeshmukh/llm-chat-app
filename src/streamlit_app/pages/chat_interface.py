@@ -37,6 +37,7 @@ class ChatInterface:
                 )
 
             with st.chat_message("assistant"):
+                # TODO: add document citation cards
                 # if len(documents) > 0:
                 #     for i, document in enumerate(documents):
                 #         with st.expander(f"Document {i + 1}"):
