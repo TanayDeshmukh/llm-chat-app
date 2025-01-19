@@ -1,0 +1,37 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0,
+      "knn": true
+    }
+  },
+  "mappings": {
+    "properties": {
+      "text": {
+        "type": "text"
+      },
+      "page_num": {
+        "type": "integer"
+      },
+      "start_idx": {
+        "type": "integer"
+      },
+      "paginated_text": {
+        "type": "boolean"
+      },
+      "file_name": {
+        "type": "keyword"
+      },
+      "embedding": {
+        "type": "knn_vector",
+        "dimension": "SET_EMBEDDING_DIMENSION",
+        "space_type": "l2",
+        "method": {
+          "name": "hnsw",
+          "engine": "faiss"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+name: llm-chat-app
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python==3.11
+  - pip==24.3.1
+  - pip:
+      - black==24.10.0
+      - streamlit==1.41.1
+      - huggingface-hub==0.27.1
+      - PyMuPDF==1.25.2
+      - typer==0.15.1
+      - spacy==3.8.4
+      - opensearch-py==2.8.0
+      - sentence-transformers==3.3.1
+      - rerankers==0.6.1
+      - openai==1.59.8
+      - tenacity==9.0.0
+
+#pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
