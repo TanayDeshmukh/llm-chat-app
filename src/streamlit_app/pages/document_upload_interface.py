@@ -13,7 +13,7 @@ class UploadDocumentsInterface:
 
         uploaded_file = st.file_uploader(
             "Choose file to upload",
-            type=["pdf"],
+            type=st.session_state.config.supported_file_formats,
             accept_multiple_files=False,
         )
 

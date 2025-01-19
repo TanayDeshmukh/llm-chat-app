@@ -1,0 +1,35 @@
+root_storage_dir: D:/Projects/llm-chat-app-data
+
+embedding_model_config:
+  model_provider: sentence_transformer
+  model_name: all-mpnet-base-v2
+  embedding_dimension: 768
+
+generator_model_config:
+  model_provider: hf_api
+  model_name: meta-llama/Meta-Llama-3-8B-Instruct
+  max_output_tokens: 500
+  temperature: 0.0
+
+opensearch_config:
+  host: "localhost"
+  port: 9200
+  index_name: test_index
+  use_top_k_embeddings: 100
+  embedding_dimension: 768
+  chunk_size: 1536
+  overlap_ratio: 0.2
+  filter_confidence_threshold: 0.5
+
+database_config:
+  db_name: uploaded_files.db
+
+reranker_config:
+  model_provider: default
+  top_k: 10
+
+use_rag: true
+use_web_search: false
+
+supported_file_formats:
+  - "pdf"

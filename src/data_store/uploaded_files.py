@@ -1,19 +1,17 @@
 import sqlite3
-from pathlib import Path
+from datetime import datetime
 from typing import List
 
-from datetime import datetime
-
 import pandas as pd
+import streamlit as st
 
-from common.constants import DEFAULT_DB_DIR, DEFAULT_DB_NAME
 from data.data_classes import UploadedFileMetadata
 
 
 class UploadedFilesDB:
-    def __init__(self, db_dir: Path = DEFAULT_DB_DIR, db_name: str = DEFAULT_DB_NAME):
-        self.db_dir = db_dir
-        self.db_name = db_name
+    def __init__(self):
+        self.db_dir = st.session_state.config.database_config.root_dir
+        self.db_name = st.session_state.config.database_config.db_name
         self.db_path = self.db_dir / self.db_name
         self.db_dir.mkdir(exist_ok=True)
 

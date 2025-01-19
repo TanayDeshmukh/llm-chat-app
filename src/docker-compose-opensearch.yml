@@ -18,7 +18,7 @@ services:
         soft: 65536
         hard: 65536
     volumes:
-      - D:/Projects/llm-chat-app-data/opensearch-data1:/usr/share/opensearch/data
+      - D:/Projects/llm-chat-app-data/opensearch-data:/usr/share/opensearch/data
     ports:
       - 9200:9200
       - 9600:9600
@@ -38,7 +38,7 @@ services:
       - opensearch-net
 
 volumes:
-  opensearch-data1:
+  opensearch-data:
 
 networks:
   opensearch-net:

@@ -1,15 +1,14 @@
 import os
-from typing import List
-
-import numpy as np
 import torch
+import numpy as np
+import streamlit as st
 
+from typing import List
+from openai import OpenAI
 from abc import ABC, abstractmethod
-
 from huggingface_hub import InferenceClient
 from sentence_transformers import SentenceTransformer
-
-from common.constants import EMBEDDING_MODEL_CACHE_DIR
+from tenacity import retry, wait_random_exponential, stop_after_attempt
 
 
 class Embedder(ABC):
@@ -26,7 +25,9 @@ class SentenceTransformerEmbedder(Embedder):
     def _load_pretrained_mode(
         model_identifier: str, trust_remote_code: bool = False
     ) -> SentenceTransformer:
-        pretrained_model_dir = EMBEDDING_MODEL_CACHE_DIR / model_identifier
+        pretrained_model_dir = (
+            st.session_state.config.embedding_model_config.cache_dir / model_identifier
+        )
         if not pretrained_model_dir.exists():
             embedder = SentenceTransformer(
                 model_name_or_path=model_identifier,
@@ -48,24 +49,39 @@ class HFAPIEmbedder(Embedder):
         hf_api_token = os.getenv("LLM_CHAT_APP_HF_API_TOKEN")
         self.embedder = InferenceClient(model_identifier, token=hf_api_token)
 
-    def encode(self, text: List[str]) -> np.array:
-        encoding = [self.embedder.feature_extraction(text_) for text_ in text]
+    def encode(self, sentences: List[str]) -> np.array:
+        encoding = [
+            self.embedder.feature_extraction(sentence) for sentence in sentences
+        ]
         encoding = np.asarray(encoding)
         return encoding
 
 
 class OpenAIEmbedder(Embedder):
-    def __init__(self):
-        self.embedder = ""
+    def __init__(self, model_name: str = "text-embedding-3-small"):
+        self.client = OpenAI()
+        self.model = model_name
 
-    def encode(self, text: str) -> np.array:
-        return ""
+    @retry(wait=wait_random_exponential(min=1, max=20), stop=stop_after_attempt(6))
+    def get_embedding(self, text: str) -> list[float]:
+        return (
+            self.client.embeddings.create(input=[text], model=self.model)
+            .data[0]
+            .embedding
+        )
+
+    def encode(self, sentences: List[str]) -> np.array:
+        encoding = [self.get_embedding(sentence) for sentence in sentences]
+        encoding = np.asarray(encoding)
+        return encoding
 
 
-def load_embedder(embedder_type: str, model_identifier: str) -> Embedder:
-    if embedder_type == "pretrained_sentence_transformer":
-        return SentenceTransformerEmbedder(model_identifier)
-    elif embedder_type == "hf_api":
-        return HFAPIEmbedder(model_identifier)
+def load_embedder(provider: str, model_name: str) -> Embedder:
+    if provider == "sentence_transformer":
+        return SentenceTransformerEmbedder(model_name)
+    elif provider == "hf_api":
+        return HFAPIEmbedder(model_name)
+    elif provider == "open_ai":
+        return OpenAIEmbedder(model_name)
     else:
-        print(f"No embedder implemented for {embedder_type=}")
+        print(f"No embedder implemented for {provider=}")

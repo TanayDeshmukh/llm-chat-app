@@ -2,6 +2,7 @@ import os
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
 
+import streamlit as st
 from huggingface_hub import InferenceClient
 
 
@@ -22,8 +23,8 @@ class HFAPIGeneratorModel(GeneratorModel):
     @staticmethod
     def _get_default_generation_args():
         generation_args = {
-            "max_tokens": 500,
-            "temperature": 0.0,
+            "max_tokens": st.session_state.config.generator_model_config.max_output_tokens,
+            "temperature": st.session_state.config.generator_model_config.temperature,
         }
         return generation_args
 
@@ -40,8 +41,8 @@ class HFAPIGeneratorModel(GeneratorModel):
         return response
 
 
-def load_generator(generator_type: str, model_identifier: str) -> GeneratorModel:
-    if generator_type == "hf_api":
-        return HFAPIGeneratorModel(model_identifier)
+def load_generator(provider: str, model_name: str) -> GeneratorModel:
+    if provider == "hf_api":
+        return HFAPIGeneratorModel(model_name)
     else:
-        print(f"No embedder implemented for {generator_type=}")
+        print(f"No generator implemented for {provider=}")

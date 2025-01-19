@@ -2,10 +2,9 @@ from typing import List, Dict, Tuple
 
 import streamlit as st
 
-from common.constants import DEFAULT_GENERATOR_MODEL_IDENTIFIER, DEFAULT_SYSTEM_PROMPT
 from data.data_classes import VectorDocumentChunk, WebDocumentChunk
 from generator.generator_model import load_generator
-from reranker.reranker import ReRanker
+from reranker.reranker import load_reranker
 from vector_store.document_vector_store import VectorDB
 
 
@@ -17,11 +16,15 @@ class ChatCompletionPipeline:
 
     def _load_generator(self):
         return load_generator(
-            generator_type="hf_api", model_identifier=DEFAULT_GENERATOR_MODEL_IDENTIFIER
+            provider=st.session_state.config.generator_model_config.model_provider,
+            model_name=st.session_state.config.generator_model_config.model_name,
         )
 
     def _load_reranker(self):
-        return ReRanker()
+        return load_reranker(
+            provider=st.session_state.config.reranker_config.model_provider,
+            top_k=st.session_state.config.reranker_config.top_k,
+        )
 
     def enrich_prompt(
         self,
@@ -54,7 +57,6 @@ class ChatCompletionPipeline:
     def run_completion_pipeline(
         self,
         chat_history: List[Dict[str, str]],
-        system_prompt: str = DEFAULT_SYSTEM_PROMPT,
     ) -> Tuple[str, List[VectorDocumentChunk | WebDocumentChunk]]:
 
         user_query = chat_history[-1]
@@ -63,20 +65,21 @@ class ChatCompletionPipeline:
         vector_documents = []
         web_documents = []
 
-        if st.session_state.use_rag:
+        if st.session_state.config.use_rag:
             # retrieve documents
             vector_documents = self.vector_store.search(
                 query_text=user_query["content"]
             )
             # rerank documents
-            vector_documents = self.reranker.run_reranker(
-                query=user_query["content"], documents=vector_documents
-            )
-        if st.session_state.use_web_search:
+            if len(vector_documents) > 1:
+                vector_documents = self.reranker.run_reranker(
+                    query=user_query["content"], documents=vector_documents
+                )
+        if st.session_state.config.use_web_search:
             pass
 
         model_input = self.enrich_prompt(
-            system_prompt=system_prompt,
+            system_prompt=st.session_state.config.system_prompt,
             chat_history=chat_history,
             query=user_query,
             vector_documents=vector_documents,

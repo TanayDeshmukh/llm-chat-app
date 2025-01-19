@@ -1,17 +1,15 @@
 from pathlib import Path
 from typing import Dict
 
+import streamlit as st
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
-from common.constants import DEFAULT_FILE_STORAGE, SUPPORTED_FILE_FORMATS
 
-
-def save_file(
-    uploaded_file: UploadedFile, meta_data: Dict, save_dir: Path = DEFAULT_FILE_STORAGE
-) -> Path:
+def save_file(uploaded_file: UploadedFile, meta_data: Dict) -> Path:
     assert (
-        meta_data["file_type"] in SUPPORTED_FILE_FORMATS
-    ), f"File type {meta_data['filetype']} is not in {SUPPORTED_FILE_FORMATS=}"
+        meta_data["file_type"] in st.session_state.config.supported_file_formats
+    ), f"File type {meta_data['filetype']} is not in {st.session_state.config.supported_file_formats=}"
+    save_dir = st.session_state.config.file_storage_dir
     save_dir.mkdir(exist_ok=True)
     file_path = save_dir / meta_data["file_name"]
     if file_path.exists():

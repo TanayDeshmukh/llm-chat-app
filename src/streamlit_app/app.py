@@ -1,12 +1,33 @@
+import argparse
+import sys
+
 import streamlit as st
 
+from common.utils import load_config
 
-def run_app():
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--config",
+        type=str,
+        default="001_base_config.yml",
+        help="provide the name of the config yaml file (to be placed on the path 'src/common/configs')",
+    )
+    args, unknown = parser.parse_known_args(sys.argv[1:])
+    return args
+
+
+def run_app(config: str):
     st.set_page_config(
         page_title="LLM-CHAT-APP",
         page_icon="💬",
         layout="wide",
     )
+
+    if "config" not in st.session_state:
+        llm_chat_config = load_config(config_name=config)
+        st.session_state.config = llm_chat_config
 
     st.markdown(
         """
@@ -23,4 +44,7 @@ def run_app():
 
 
 if __name__ == "__main__":
-    run_app()
+
+    args = parse_args()
+
+    run_app(config=args.config)

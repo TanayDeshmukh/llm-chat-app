@@ -1,10 +1,8 @@
-import streamlit as st
-
 from typing import Dict
 
+import streamlit as st
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
-from common.constants import CHUNK_SIZE, OVERLAP_SIZE
 from data.data_classes import UploadedFileMetadata
 from data.utils import save_file
 from data_store.uploaded_files import UploadedFilesDB
@@ -28,8 +26,8 @@ def pdf_upload_pipeline(
         documents = extract_document_chunks(
             pages,
             meta_data["file_name"],
-            chunk_size=CHUNK_SIZE,
-            overlap_size=OVERLAP_SIZE,
+            chunk_size=st.session_state.config.opensearch_config.chunk_size,
+            overlap_ratio=st.session_state.config.opensearch_config.overlap_ratio,
         )
         st.write("Adding embeddings to vector database..")
         error = vector_db.add_documents(documents)

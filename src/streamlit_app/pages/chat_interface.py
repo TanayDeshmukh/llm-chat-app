@@ -55,15 +55,6 @@ class ChatInterface:
 
         self.handle_user_input(pipeline=pipeline)
 
-        if "use_rag" not in st.session_state:
-            st.session_state.use_rag = False
-        if "use_web_search" not in st.session_state:
-            st.session_state.use_web_search = False
-
-        with st.sidebar:
-            st.session_state.use_rag = st.checkbox("Use RAG")
-            st.session_state.use_web_search = st.checkbox("Use web search")
-
 
 if __name__ == "__main__":
     ChatInterface().render()

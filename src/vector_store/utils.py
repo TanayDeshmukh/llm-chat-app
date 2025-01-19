@@ -89,12 +89,13 @@ def rolling_window(
 
 
 def extract_document_chunks(
-    pages: List[str], file_name: str, chunk_size: int, overlap_size: int
+    pages: List[str], file_name: str, chunk_size: int, overlap_ratio: int
 ) -> List[VectorDocumentChunk]:
     i = 0
     j = i + 1
     start_idx = 0
     all_chunks = []
+    overlap_size = int(chunk_size * overlap_ratio)
     while j < len(pages):
         page1 = pages[i]
         page2 = pages[j]
