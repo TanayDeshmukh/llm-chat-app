@@ -42,7 +42,7 @@ how all the individual pieces fit together in a well-organized Python project wh
 4. Add the huggingface API token with the name ``LLM_CHAT_APP_HF_API_TOKEN`` in your environment variables.
 5. Mark ``src`` as ``Sources Root``.
 6. You can set all the required configurations in a ``config.yml`` in the directory `src/common/configs`.
-7. Run streamlit app with ``streamlit run app.py -- --config <config file name>``. Example: ``streamlit run app.py -- --config 001_base_config.yml``.
+7. Run streamlit app with ``streamlit run streamlit_app/app.py -- --config <config file name>``. Example: ``streamlit run app.py -- --config 001_base_config.yml``.
 
 
 ---
